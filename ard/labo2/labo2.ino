@@ -40,48 +40,91 @@ int potentium() {
   if(currentTime - previousTime >= interval){
     previousTime = currentTime;
     int potValue = analogRead(broche);
-    pot = map(potValue, 0, 1023, 0, 20);
-    return pot;
+    return potValue;
   }
  
 }
-void button(int pot) {
+void button(int potValue) {
+  int pot = map(potValue, 0, 1023, 0, 20);
+  int pot100 = map(potValue, 0, 1023, 0, 100);
+  const int DA_AVANT_DERNIER = 0;
   if(estClic(currentTime)){
-    if (pot % 2 == 0) {
+    if (DA_AVANT_DERNIER % 2 == 0) {
      Serial.print('[');
       for (int i = 0; i < 20; i++) {
-        if (pot >= i) {
+        if (pot >= i + 1) {
           Serial.print('#');
         } else {
           Serial.print('.');
         }
       }
-      Serial.println(']');
-      Serial.print("  ");
-      Serial.print((pot*100)/20);
-      Serial.print("%");
-    } 
-    } else {
-      Serial.print((pot*100)/20);
-      Serial.print("%  ");
-      Serial.print('[');
+      Serial.print("]  ");
+      Serial.print(pot100);
+      Serial.println("%");
+      leds(potValue);  
+    } else { 
+      Serial.print(pot100);
+      Serial.print("%  [");
       for (int i = 0; i < 20; i++) {
-        if (pot >= i) {
-          Serial.print('#');
+        if (pot >= i + 1) {
+          Serial.print('@');
         } else {
           Serial.print('.');
         }
       }
       Serial.println(']');
+      leds(potValue);  
     }
-    
   }
+}
 
+void leds(int potValue) {
+  //Responsive but assumes decrementing and sequential pin numbers, as well as a number of leds dividable by 4 
+  int pot100 = map(potValue, 0, 1023, 0, 100);
+  const int lowestPinNumber = 8;
+  const int highestPinNumber = 11;
+  const int pinDiff = highestPinNumber - lowestPinNumber + 1;
+  int bulbsPerBracket = pinDiff / 4;
+  int pin = highestPinNumber;
+  
+  for (int j = lowestPinNumber; j <= highestPinNumber; j++) {
+    analogWrite(j, 0);
+  }
+  
+  if (pot100 < 25) {
+    pin = pin - (pinDiff * 0);
+    for (int i = 0; i < bulbsPerBracket; i++) {
+      analogWrite(pin, 255);
+      pin ++;
+    }
+  } else if (pot100 < 50) {
+  pin = pin - (pinDiff * (1*(1.0/4.0)));
+  for (int i = 0; i < bulbsPerBracket + 1; i++) {
+    analogWrite(pin, 255);
+    pin++;
+  }
+  } else if (pot100 < 75) {
+  pin = pin - (pinDiff * (2*(1.0/4.0)));
+  for (int i = 0; i < bulbsPerBracket + 2; i++) {
+    analogWrite(pin, 255);
+    pin++;
+    }
+  } else if (pot100 <= 100) {
+  pin = pin - (pinDiff * (3*(1.0/4.0)));
+  for (int i = 0; i < bulbsPerBracket + 3; i++) {
+    analogWrite(pin, 255);
+    pin++;
+    }
+  } else {
+    Serial.print("Error");
+  }
+  
+}
 
 void loop() {
   currentTime = millis();
   int pot = potentium();
-  button(pot);  
+  button(pot);
   //Exécuter d'autres choses
 }
 
