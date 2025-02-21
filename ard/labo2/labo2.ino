@@ -1,21 +1,28 @@
 unsigned long currentTime = 0;
- 
+const int broche = A1;
+const int broche_button = 2;
+
 void setup() {
   Serial.begin(115200);
 }
  
-void loop() {
+void potentium() {
   const int interval = 1000;
-  static unsigned long previousTime = 0;
-
+  static unsigned long previousTime = currentTime;
+  if(currentTime - previousTime >= interval){
+    previousTime = currentTime;
+    int potValue = analogRead(broche);
+    int mappedValue = map(potValue, 0, 1023, 0, 20);
+    Serial.println(mappedValue);
+  }
+}
+void button() {
+  
+}
+void loop() {
   currentTime = millis();
 
-  //potentiometre
-  if(currentTime - previousTime >= interval){
-      previousTime = currentTime;
-
-      analogRead(A0)
-  }
-  
+  potentium();
+  button();  
   //Exécuter d'autres choses
 }
