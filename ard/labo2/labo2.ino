@@ -18,17 +18,17 @@ void potentium(int& pot) {
   }
 }
 void button(int pot) {
-  static int etatPrecedent = HIGH; 
+  static int previousState = HIGH; 
   static int state = HIGH;
-  const int interval = 25;
+  const int interval = 10;
   static unsigned long previousTime = currentTime;
   static unsigned int currentState = digitalRead(broche_button);
+  static unsigned long lastChange = 0;
   if (currentState != previousState) {
-    previousTime = currentTime;
+    lastChange = millis();
   }
-  static unsigned int previousState = currentTime
-  if(currentTime - previousTime >= interval && currentState != state){
-    state = currentState;
+  if(millis() - lastChange >= interval && currentState != state){
+    PreviousState = currentState;
     previousTime = currentTime;
     if (analogRead(2) == 1) {
      Serial.print('[');
