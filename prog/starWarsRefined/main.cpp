@@ -61,21 +61,24 @@ void lirePlanetes(Planete planetes[], int nombrePlanetes) {
 	fichier.open("planetes.csv");
 
 
-	string code; string nom; string ligne;
+	string code; string nom; string ligne; string mot;
 	int i = 0; // counter for alternating between name and codename
     int j = 0; // num of stars
-	while (getline(fichier, ligne, ',')) {
-		if (i % 3 == 0) {
-			planetes[j].codeEtoile = ligne;
-		} else if (i % 3 == 1) {
-            planetes[j].nom = ligne;
-        }
-		else {
-			planetes[j].diametre = stoi(ligne);
-            j++;
-		}
-            i++;
-	};
+	while (getline(fichier, ligne, '\n')) {
+		istringstream ss(ligne);
+		while (getline(ss, mot, ',')) {
+			if (i % 3 == 0) {
+				planetes[j].codeEtoile = mot;
+			} else if (i % 3 == 1) {
+ 	           planetes[j].nom = mot;
+ 	       }
+			else {
+				planetes[j].diametre = stoi(mot);
+ 	           j++;
+			}
+ 	           i++;
+		};
+	}
 	fichier.close();
 }
 
@@ -120,7 +123,10 @@ void afficherEtoiles(Etoile etoiles[], int tailleEtoiles) {
             stringOne = etoiles[i].planetes[j].nom;
             stringTwo = etoiles[i].planetes[j].diametre;
             stringThree = (pow(((etoiles[i].planetes[j].diametre)/2), 2) * 3.14 * 4) / 3;
-            cout << format("|{}        | {}             | {}            ", stringOne, stringTwo, stringThree )
+            cout << "| " << setw(13) << left << stringOne;
+            cout << "| " << setw(14) << right << stringOne;
+            cout << "| " << setw(16) << right << stringOne;
+			cout << endl; 
         };
         cout << "--------------------------------------------"<< endl << endl;
     }
