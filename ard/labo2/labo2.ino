@@ -73,7 +73,6 @@ void button(int potValue) {
         }
       }
       Serial.println(']');
-      leds(potValue);  
     }
   }
 }
@@ -108,13 +107,13 @@ void leds(int potValue) {
   for (int i = 0; i < bulbsPerBracket + 2; i++) {
     analogWrite(pin, 255);
     pin++;
-    }
+  }
   } else if (pot100 <= 100) {
   pin = pin - (pinDiff * (3*(1.0/4.0)));
   for (int i = 0; i < bulbsPerBracket + 3; i++) {
     analogWrite(pin, 255);
     pin++;
-    }
+  }
   } else {
     Serial.print("Error");
   }
@@ -125,30 +124,5 @@ void loop() {
   currentTime = millis();
   int pot = potentium();
   button(pot);
-  //Exécuter d'autres choses
+  leds(pot);  
 }
-
-// static int previousState = HIGH; 
-//   static int state = HIGH;
-//   const int interval = 10;
-//   static unsigned long previousTime = currentTime;
-//   static unsigned int currentState = digitalRead(broche_button);
-//   static unsigned long lastChange = 0;
-//   if (currentState != previousState) {
-//     lastChange = millis();
-//   }
-//   if(millis() - lastChange >= interval && currentState != state){
-//     previousState = currentState;
-//     previousTime = currentTime;
-//     if (analogRead(2) == 1) {
-    //  Serial.print('[');
-    //   for (int i = 0; i < 20; i++) {
-    //     if (pot >= i) {
-    //       Serial.print('#');
-    //     } else {
-    //       Serial.print('.');
-    //     }
-    //   }
-    //   Serial.println(']');
-//     }
-//   }
