@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
 const string BASE_DONNEES = "./base.txt"; 
@@ -37,15 +38,22 @@ class Product {
     }
 };
 
+struct Node {
+    Product data;
+    Node* next = nullptr;            
+    Node() {
+        Node->data = data;
+         
+    }
+};
 class ProductList {
     private:
-        struct Node {
-            Product data;
-            Node* next = nullptr;
-        };
-        *head = &Node
-        
+        Node& head;
     public:
+
+    void addProduct(product) {
+
+    }
 
 };
 
