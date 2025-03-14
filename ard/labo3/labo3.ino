@@ -1,6 +1,8 @@
 unsigned long currentTime = 0;
-const int photometer= A0;
+const int photometer = A0;
 const int PIN_BUTTON = 2;
+const int PIN_joyX = 0;
+const int PIN_joyY = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -45,8 +47,17 @@ void photores() {
   static float lastLuminority = currentLuminosity;
 }
 
+void joystick() {
+   // read analog X and Y analog values
+  xValue = analogRead(PIN_joyX);
+  yValue = analogRead(PIN_joyY);
+
+  
+}
+
 void loop() {
   if (currentTime == 0) ? name();
   currentTime = millis();
   photores();
+  joystick();
 }
