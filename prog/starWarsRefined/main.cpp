@@ -3,7 +3,7 @@
 #include <string>
 #include <iomanip>
 #include <math.h>
-#include <format>
+
 using namespace std;
 
 const string FICHIER_PLANETES = "planetes.csv";
@@ -11,148 +11,131 @@ const string FICHIER_ETOILES = "etoiles.csv";
 const int MAX_PLANETES = 8;
 const int NOMBRE_PLANETES = 32;
 const int NOMBRE_ETOILES = 5;
-const int PI = 3.14159;
+const float PI = 3.14159;
 
 struct Planete {
+private:
 	string codeEtoile = "";
 	string nom = "";
 	int diametre = 0;
+	
+	long long volume() {
+		return (4.0 / 3.0) * PI * pow((diametre / 2.0), 3);
+	}
+	static int count;
+
+public:
+	static void lirePlanetes(Planete planetes[]) {
+		ifstream fichier(FICHIER_PLANETES);
+		string donnee;
+		for (int i = 0; i < NOMBRE_PLANETES; i++) {
+			getline(fichier, donnee, ',');
+			planetes[i].codeEtoile = donnee;
+			getline(fichier, donnee, ',');
+			planetes[i].nom = donnee;
+			getline(fichier, donnee);
+			planetes[i].diametre = stoi(donnee);
+			count++;
+		}
+	}
+
+	string getCodeEtoile() {
+		return codeEtoile;
+	}
+	string getName() {
+		return nom;
+	}
+	int getDiameter() {
+		return diametre;
+	}
+	long long getVolume() {
+		return volume();
+	}
+	static int getCount() {
+		return count;
+	}
 };
+
 
 struct Etoile {
+private:
 	string code = "";
 	string nom = "";
-	int nbPlanetes = 0;							//Variable à utiliser dans la fonctions ajouterPlanetesAuxEtoiles pour incrémenter le nombre de planètes ajoutés à l'étoile.								
-	Planete planetes[MAX_PLANETES];	//Tableau des planètes de l'étoile.  Ici on suppose qu'il y a maximum 8 planètes par système (donc pour certaines étoiles, il y aura des cases vides).
-};
+	int nbPlanetes = 0;
+	Planete planetes[MAX_PLANETES];
+	static int count;
 
+public:
 
-/*
-* Fonction remplissant un tableau d'étoiles à partir d'un fichier CSV
-* ATTENTION: Ne pas changer la signature de la fonction
-*/
-void lireEtoiles(Etoile etoiles[], int nombreEtoiles) {
-	fstream fichier;
-	fichier.open(FICHIER_ETOILES, ios::in);
-
-	string code; string nom; string ligne;
-	int i = 0; // counter for alternating between name and codename
-    int j = 0; // num of stars
-	while (getline(fichier, ligne, ',')) {
-		if (i % 2 == 0) {
-			etoiles[j].code = ligne;
+	static void lireEtoiles(Etoile etoiles[]) {
+		ifstream fichier(FICHIER_ETOILES);
+		string donnee;
+		for (int i = 0; i < NOMBRE_ETOILES; i++) {
+			getline(fichier, donnee, ',');
+			etoiles[i].code = donnee;
+			getline(fichier, donnee);
+			etoiles[i].nom = donnee;
+			count++;
 		}
-		else {
-			etoiles[j].nom = ligne;
-            j++;
-		}
-            i++;
-	};
-	fichier.close();
-}
-
-
-/*
-* Fonction remplissant un tableau de planètes à partir d'un fichier CSV
-* ATTENTION: Ne pas changer la signature de la fonction
-*/
-void lirePlanetes(Planete planetes[], int nombrePlanetes) {
-	fstream fichier;
-	fichier.open("planetes.csv");
-
-
-	string code; string nom; string ligne; string mot;
-	int i = 0; // counter for alternating between name and codename
-    int j = 0; // num of stars
-	while (getline(fichier, ligne, '\n')) {
-		istringstream ss(ligne);
-		while (getline(ss, mot, ',')) {
-			if (i % 3 == 0) {
-				planetes[j].codeEtoile = mot;
-			} else if (i % 3 == 1) {
- 	           planetes[j].nom = mot;
- 	       }
-			else {
-				planetes[j].diametre = stoi(mot);
- 	           j++;
-			}
- 	           i++;
-		};
 	}
-	fichier.close();
-}
 
+	void ajouterPlanetesAuxEtoiles(Planete planetes[], int taillePlanetes) {
+		for (int j = 0; j < taillePlanetes; j++) {
+			if (this->code == planetes[j].getCodeEtoile() && nbPlanetes < MAX_PLANETES) {
+				this->planetes[nbPlanetes++] = planetes[j];
+			}
+		}
+	}
 
-/*
-* Fonction permettant d'ajouter les bonnes planètes à chaque étoile
-* afin que chaque étoile possède ses propres planètes.
-* ASTUCE: Utiliser la variable nbPlanetes de la structure Etoile pour incrémenter le nombre de planètes ajoutées à l'étoile.
-* ATTENTION: Ne pas changer la signature de la fonction
-*/
-void ajouterPlanetesAuxEtoiles(Planete planetes[], int taillePlanetes, Etoile etoiles[], int tailleEtoiles) {
-    Planete goodPlanet; int planetsAdded = 0;
-    for (int starCount = 0; starCount < tailleEtoiles; starCount++) {
-        for (int planetCount = 0; planetCount < taillePlanetes; planetCount++) {
-            if (planetes[planetCount].codeEtoile == etoiles[starCount].code) {
-                goodPlanet = planetes[planetCount];
-                etoiles[starCount].planetes[planetsAdded] = goodPlanet;
-                planetsAdded++;
-            }
-        }
-    planetsAdded = 0;
-    }
-}
+	int getNbPlanetes() {
+		return nbPlanetes;
+	}
+	string getName() {
+		return nom;
+	}
+	Planete getPlanets(int i) {
+		return planetes[i];
+	}
+	static int getCount() {
+		return count;
+	}
+};
+int Etoile::count = 0; 
+int Planete::count = 0;
 
-
-/*
-* Fonction permettant d'afficher les étoiles et leurs planètes dans un format spécifique
-* ATTENTION: Ne pas changer la signature de la fonction
-*/
 void afficherEtoiles(Etoile etoiles[], int tailleEtoiles) {
-    string stringOne;
-    string stringTwo;
-    string stringThree;
-    cout << "--------------------------------------------"<< endl;
-    cout << "| StarWars - Les étoiles et leurs planètes |"<< endl;
-    cout << "--------------------------------------------"<< endl << endl;
-    for (int i = 0; i < tailleEtoiles; i++) {
-        cout << "--------------------------------------------"<< endl;
-        cout << "| PLANETE  | DIAMETRE (km)  | VOLUME (km3) |"<< endl;
-        cout << "--------------------------------------------"<< endl << endl;
-        for (int j = 0; i < NOMBRE_PLANETES; j++) {
-            stringOne = etoiles[i].planetes[j].nom;
-            stringTwo = etoiles[i].planetes[j].diametre;
-            stringThree = (pow(((etoiles[i].planetes[j].diametre)/2), 2) * 3.14 * 4) / 3;
-            cout << "| " << setw(13) << left << stringOne;
-            cout << "| " << setw(14) << right << stringOne;
-            cout << "| " << setw(16) << right << stringOne;
-			cout << endl; 
-        };
-        cout << "--------------------------------------------"<< endl << endl;
-    }
+	cout << "----------------------------------------------------" << endl;
+	cout << "|     StarWars - Les Ã©toiles et leurs planÃ¨tes     |" << endl;
+	cout << "----------------------------------------------------" << endl;
+	for (int i = 0; i < tailleEtoiles; i++) {
+		cout << endl;
+		cout << etoiles[i].getName() << endl;
+		cout << "----------------------------------------------------" << endl;
+		cout << "| " << setw(13) << left << "PLANÃˆTE" << " | " << setw(13) << left << "DIAMÃˆTRE (km)" << " | " << setw(16) << "VOLUME (kmÂ³)" << " |" << endl;
+		cout << "----------------------------------------------------" << endl;
+		for (int j = 0; j < etoiles[i].getNbPlanetes(); j++) {
+			cout << "| " << setw(13) << left << etoiles[i].getPlanets(j).getName() << " | " << setw(13) << right << etoiles[i].getPlanets(j).getDiameter() << " | " << setw(16) << right << etoiles[i].getPlanets(j).getVolume() << " |" << endl;
+		}
+		cout << "----------------------------------------------------" << endl;
+	}
+	cout << "Nombre etoiles: " << Etoile::getCount() << endl; 
+	cout << "Nombre planetes: " << Planete::getCount() << endl; 
 }
 
-
-/*
-* Fonction représentant l'algorithme de StarWars
-* ATTENTION: Ne rien changer à cette fonction
-*/
 void starWars() {
-	Etoile etoiles[NOMBRE_ETOILES];
-	lireEtoiles(etoiles, NOMBRE_ETOILES);
-
 	Planete planetes[NOMBRE_PLANETES];
-	lirePlanetes(planetes, NOMBRE_PLANETES);
+	Planete::lirePlanetes(planetes);
 
-	ajouterPlanetesAuxEtoiles(planetes, NOMBRE_PLANETES, etoiles, NOMBRE_ETOILES);
+	Etoile etoiles[NOMBRE_ETOILES];
+	Etoile::lireEtoiles(etoiles);
+
+	for (int i = 0; i < NOMBRE_ETOILES; i++) {
+		etoiles[i].ajouterPlanetesAuxEtoiles(planetes, NOMBRE_PLANETES);
+	}
 
 	afficherEtoiles(etoiles, NOMBRE_ETOILES);
 }
 
-
-/*
-* Fonction principale du programme
-*/
 int main() {
 	setlocale(LC_ALL, "");
 	setlocale(LC_NUMERIC, "C");
@@ -161,4 +144,3 @@ int main() {
 	starWars();
 	return 0;
 }
-
