@@ -40,16 +40,21 @@ class Product {
 
 struct Node {
     Product data;
-    Node* next = nullptr;            
-    Node() {
-        Node->data = data;
-         
+    Node* next = nullptr;
+
+    Node(Product data) {
+        this->data = data;
+        next = nullptr;
     }
 };
 class ProductList {
     private:
-        Node& head;
+        Node* head;
     public:
+
+    ProductList() {
+        head = nullptr;
+    }
 
     void addProduct(product) {
 
