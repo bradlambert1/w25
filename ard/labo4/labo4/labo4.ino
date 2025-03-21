@@ -17,21 +17,20 @@ State state = STARTUP;
 
 // Global vars
 unsigned long currentTime = 0;
-string DA = "2471005"
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   // Distance
   pinMode(TRIGGER_PIN, OUTPUT);
-  PinMode(ECHO_PIN, INPUT);
+  pinMode(ECHO_PIN, INPUT);
   // LCD
   lcd.begin(16, 2);
 }
 
-void printDistance(string da, int dist, int deg) {
+void printDistance(int dist, int deg) {
   Serial.print("etd:");
-  Serial.print(da);
+  Serial.print("2471005");
   Serial.print(",dist:");
   Serial.print(dist);
   Serial.print(",deg:");
@@ -43,7 +42,7 @@ void stateStartup() {
   
   lcd.clear();
   lcd.print("2471005");
-  lcd.SetCursor(0,1);
+  lcd.setCursor(0,1);
   lcd.print("Labo 4B");
   delay(2000);
   
@@ -52,7 +51,7 @@ void stateStartup() {
   state = WORKING;
 }
 
-void measureDistance() {
+float measureDistance() {
   float distance = hc.dist();
 
   return distance;
@@ -61,12 +60,15 @@ void measureDistance() {
 void lcdDisplay(float distance, int deg) {
   
   lcd.clear();
-  lcd.print("Dist  : ", distance);
-  lcd.SetCursor(0,1);
+  lcd.print("Dist  : ");
+  lcd.print(distance);
+  lcd.setCursor(0, 1);
   if (distance < 30) {
     lcd.print("Obj  : Trop pret");
   } else if (distance >= 30 && distance <=60) {
-    lcd.print("Obj  : ", deg, " deg");
+    lcd.print("Obj  : ");
+    lcd.print(deg);
+    lcd.print(" deg");
   } else {
     lcd.print("Obj  : Trop loin");
   }
@@ -93,7 +95,7 @@ void stateWorking() {
     lcdDisplay(distance, deg);
 
     if (currentTime - lastPrintTime >= printRate) {
-      printDistance(DA, distance, deg);
+      printDistance(distance, deg);
       lastMeasureTime = currentTime;
     }
   }
