@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <label for="text"></label>
+      <input type="text" id="text" name="text" class="text" />
+      <button id="button" type="button" name="button">+</button>
+      <p>Veuillez saisir une valeur.</p>
+      <br />
+      <br />
+      <div class="flex" id="list">
+        <span>test</span>
+        <span>test2</span>
+      </div>
+    </div>
+  </body>
+</html>
+
+<style>
+  .flex span button {
+    height: 25px;
+    border-radius: 10px;
+    margin-left: 5px;
+    background-color: red;
+    width: 25px;
+  }
+  .flex span {
+    border: 1px solid black;
+    border-radius: 10px;
+    height: 25px;
+    min-width: 50px;
+    text-align: center;
+    display: flex;
+    padding-left: 5px;
+  }
+  .flex {
+    display: flex;
+    gap: 5px;
+    height: 30px;
+    width: 100vw;
+    font-size: larger;
+    font-weight: bold;
+    flex-wrap: wrap;
+  }
+  p {
+    font-size: larger;
+  }
+  .container {
+    height: 40px;
+    width: 250px;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-items: center;
+  }
+  .text {
+    width: 200px;
+    height: 20px;
+  }
+  button {
+    width: 25px;
+    height: 25px;
+  }
+</style>
