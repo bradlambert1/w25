@@ -105,7 +105,7 @@ void lcdDisplay(float dist, int deg) {
 }
 
 void motorTarget(int deg) {
-  float targetStep = map (deg, 0, 180, 0, (2038/2));
+  float targetStep = map (deg, 10, 170, 0, (2038/2));
   
   myStepper.moveTo(targetStep);
 }
@@ -115,7 +115,11 @@ void stateWorking() {
   static unsigned long lastPrintTime = 0;
   const int MeasureRate = 50;
   const int printRate = 100;
-  float deg = 0.0;
+  const int minAngle = 10;
+  const int maxAngle = 170;
+  const int minDistance = 30;
+  const int maxDistance = 60;
+  static float deg = 0.0;
   float distance = 0;
 
 
@@ -123,8 +127,8 @@ void stateWorking() {
     distance = measureDistance();
     lastMeasureTime = currentTime;
   
-    if (distance >= 300 && distance <= 600) {
-      deg = map(distance, 300, 600, 0, 180);
+    if (distance >= minDistance*10 && distance <= maxDistance*10) {
+      deg = map(distance, minDistance*10, maxDistance*10, minAngle, maxAngle);
     }
     distance = distance / 10;
 
