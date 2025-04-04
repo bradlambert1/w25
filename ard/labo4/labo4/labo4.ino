@@ -6,10 +6,12 @@
 HCSR04 hc(TRIGGER_PIN, ECHO_PIN);
 
 ///////// LCD
-#include <LiquidCrystal.h>
+#include <LCD_I2C.h>
 
-const int rs = 36, en = 34, d4 = 32, d5 = 30, d6 = 28, d7 = 26;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+LCD_I2C lcd(0x27, 16, 2); 
+// 0x27 étant l'adresse I2C de l'écran
+// Pour trouver l'autre adresse, utilisez l'exemple Arduino "wire/i2c_scanner"
+// 16 x 2 sa taille en colonnes/lignes
 
 ///////// State Machine
 enum State {STARTUP, WORKING};
@@ -35,15 +37,16 @@ unsigned long currentTime = 0;
 
 void setup() {
   /////// put your setup code here, to run once:
-  // Serial.begin(9600);
-  Serial.begin(115200);
+  Serial.begin(9600);
+  // Serial.begin(115200);
   
   /////// Distance
   pinMode(TRIGGER_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
   
   /////// LCD
-  lcd.begin(16, 2);
+  lcd.begin();
+  lcd.backlight();
   
   /////// Accel Stepper default configs
   // Définir la vitesse maximale, le facteur d'accélération,
@@ -79,12 +82,12 @@ void stateStartup() {
 
 float measureDistance() {
   float distance = hc.dist();
-
+  distance = distance * 10;
   return distance;
 }
 
-void lcdDisplay(float distance, int deg) {
-  
+void lcdDisplay(float dist, int deg) {
+  int distance = dist;
   lcd.clear();
   lcd.print("Dist  : ");
   lcd.print(distance);
@@ -102,8 +105,7 @@ void lcdDisplay(float distance, int deg) {
 }
 
 void motorTarget(int deg) {
-  float targetAngle = map(deg, 0, 180, 0, 170);
-  float targetStep = map (targetAngle, 0, 170, 0, 2038);
+  float targetStep = map (deg, 0, 180, 0, (2038/2));
   
   myStepper.moveTo(targetStep);
 }
@@ -113,7 +115,7 @@ void stateWorking() {
   static unsigned long lastPrintTime = 0;
   const int MeasureRate = 50;
   const int printRate = 100;
-  int deg = 0;
+  float deg = 0.0;
   float distance = 0;
 
 
@@ -121,16 +123,18 @@ void stateWorking() {
     distance = measureDistance();
     lastMeasureTime = currentTime;
   
-    if (distance >= 30 && distance <= 60) {
-      deg = map(distance, 30, 60, 0, 180);
+    if (distance >= 300 && distance <= 600) {
+      deg = map(distance, 300, 600, 0, 180);
     }
+    distance = distance / 10;
+
     
     lcdDisplay(distance, deg);
     motorTarget(deg);
 
     if (currentTime - lastPrintTime >= printRate) {
       printDistance(distance, deg);
-      lastMeasureTime = currentTime;
+      lastPrintTime = currentTime;
     }
   }
 }
@@ -139,7 +143,6 @@ void stateWorking() {
 void loop() {
   // put your main code here, to run repeatedly:  
   currentTime = millis();
-  Serial.print("test");
   switch (state) {
     case STARTUP:
       stateStartup();
