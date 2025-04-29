@@ -1,0 +1,29 @@
+#playlist-container {
+  border: 1px solid black;
+  width: 350px;
+  height: 70rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+}
+#playlist-container span {
+  border: 1px solid black;
+  height: 15vh;
+  /* -- */
+  text-align: center;
+}
+#playlist-container span .text-elements {
+  width: 300px;
+  border: 1px solid red;
+}
+#playlist-container span .buttons {
+  border: 1px solid blue;
+  width: 45px;
+  height: 90px;
+  float: right;
+}
+body {
+  display: flex;
+  gap: 5%;
+  justify-content: center;
+}
